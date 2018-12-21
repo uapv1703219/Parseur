@@ -25,7 +25,6 @@ void recup::convert() {
 	ifstream fichier("PapersList_temp.txt", ios::in);
 	if (fichier)
 	{
-
 		string ligne;
 		string name_fichier;
 		while(getline(fichier, ligne))
@@ -35,7 +34,6 @@ void recup::convert() {
 			name_fichier = remplacement(name_fichier);
 			ligne = remplacement(ligne);
 			name_fichier.erase(name_fichier.size() - 4);
-			//cout << ("pdf2txt -o " + name_fichier + ".txt " + paper_path + ligne).c_str() << endl;
 			system(("pdf2txt -o " + convert_path + name_fichier + ".txt " + paper_path + ligne).c_str());
 		}
 		

@@ -1,0 +1,635 @@
+Automatic Categorization of Author Gender
+
+via N-Gram Analysis
+
+Jonathan Doyle
+
+Vlado Keˇselj
+
+Faculty of Computer Science, Dalhousie University,
+
+6050 University Avenue, Halifax, Nova Scotia, Canada
+
+e-mail : {doyle,vlado}@cs.dal.ca
+
+Abstract
+
+We present a method for automatic
+categorization of author gender via
+n-gram analysis. Using a corpus
+of British student essays, experi-
+ments using character-level, word-
+level, and part-of-speech n-grams are
+performed. The peak accuracy for all
+methods is roughly equal, reaching a
+maximum of 81%. These results are
+on par with other, established tech-
+niques, while retaining the simplicity
+and ease-of-generalization inherent in
+n-gram techniques.
+
+1 Introduction
+There are diﬀerent subtasks of text classiﬁca-
+tion and they can be divided into topic-based
+and non-topic-based classiﬁcation. The tra-
+ditional text classiﬁcation is topic-based and
+a typical example is news classiﬁcation. Re-
+cently, there has been an increasing activity in
+the area of non-topic classiﬁcation as well, e.g.,
+in sub-tasks such as
+
+1. genre classiﬁcation (Finn and Kushmer-
+ick, 2003), (E. Stamatatos and Kokki-
+nakis, 2000),
+
+2. sentiment classiﬁcation,
+
+3. spam identiﬁcation,
+
+4. language and encoding identiﬁcation, and
+
+5. authorship attribution and plagiarism de-
+
+tection (Khmelev and Teahan, 2003).
+
+Many algorithms have been invented for as-
+sessing the authorship of a given text. These
+algorithms rely on the fact that authors use lin-
+guistic devices at every level—semantic, syn-
+tactic,
+lexicographic, orthographic and mor-
+phological (Ephratt, 1997)—to produce their
+
+text. Typically, such devices are applied un-
+consciously by the author, and thus provide
+a useful basis for unambiguously determining
+authorship. The most common approach to
+determining authorship is to use stylistic anal-
+ysis that proceeds in two steps: ﬁrst, spe-
+ciﬁc style markers are extracted, and second,
+a classiﬁcation procedure is applied to the re-
+sulting description. These methods are usually
+based on calculating lexical measures that rep-
+resent the richness of the author’s vocabulary
+and the frequency of common word use (Sta-
+matatos et al., 2001). Style marker extraction
+is usually accomplished by some form of non-
+trivial NLP analysis, such as tagging, parsing
+and morphological analysis. A classiﬁer is then
+constructed, usually by ﬁrst performing a non-
+trivial feature selection step that employs mu-
+tual information or Chi-square testing to de-
+termine relevant features.
+
+However, there are several disadvantages of
+this standard approach. First, techniques used
+for style marker extraction are almost always
+language dependent, and in fact diﬀer dramat-
+ically from language to language. For example,
+an English parser usually cannot be applied to
+German or Chinese. Second, feature selection
+is not a trivial process, and usually involves
+setting thresholds to eliminate uninformative
+features (Scott and Matwin, 1999). These de-
+cisions can be extremely subtle, because al-
+though rare features contribute less signal than
+common features, they can still have an impor-
+tant cumulative eﬀect (Aizawa, 2001). Third,
+current authorship attribution systems invari-
+ably perform their analysis at the word level.
+However, although word level analysis seems
+to be intuitive, it ignores the fact that mor-
+phological features can also play an important
+role, and moreover that many Asian languages
+such as Chinese and Japanese do not have word
+boundaries explicitly identiﬁed in text. In fact,
+
+word segmentation itself is a diﬃcult prob-
+lem in Asian languages, which creates an extra
+level of diﬃculty in coping with the errors this
+process introduces. Additionally, the number
+of authors is small in all reported experiments,
+so the size of author-speciﬁc information is not
+an issue. If the number of authors, or classes in
+general, is large, we have to set a limit on the
+author-speciﬁc information, i.e., on the author
+proﬁle.
+
+In this paper, we propose a simple method
+
+that avoids each of these problems.
+
+Two important operations are:
+
+1. choosing the optimal set of n-grams to be
+
+included in the proﬁle, and
+
+2. calculating the similarity between two
+
+proﬁles.
+
+The approach does not depend on a speciﬁc
+language, and it does not require segmentation
+for languages such as Chinese or Thai. There
+is no any text preprocessing or higher level pro-
+cessing required for character or word n-grams,
+while the most complicated NLP tool used be-
+ing a part-of-speech tagger used in two of the
+experiments.
+
+The small proﬁle size is not important only
+for eﬃciency reasons, but it is also a natural
+mechanism for over-ﬁtting control.
+
+2 N-Gram Analysis
+
+The term ‘N-gram’ refers to a series of sequen-
+tial tokens in a document. The series can be
+of length 1 (‘unigrams’), length 2 (‘bigrams’),
+etc, towards the generalized term “N-gram”.
+The tokens used can be words, letters, or any
+other unit of information present throughout
+the document. This versatility allows N-gram
+analysis techniques to be applied to other me-
+dia: both images (Rickman and Rosin, 1996)
+and music (Doraisamy and Ruger, 2003) have
+been the focus of N-gram research.
+
+N-grams have been used in a wide variety of
+situations, including optical character recog-
+nition (Harding et al., 1997) and author at-
+tribution (Keselj et al., 2003). The technique
+involves the construction of a ‘proﬁle’ — es-
+sentially a listing of the relative proportions of
+each potential N-gram. When an item is to be
+classiﬁed, its proﬁle is compared with known
+
+ones to determine the best match. The ba-
+sic method of comparison is an N-dimensional
+distance measurement.
+
+The use of n-gram probability distribution
+and n-gram models in NLP is a relatively sim-
+ple idea, but it has been found to be eﬀective
+in many applications. For example, character
+level n-gram language models can be easily ap-
+plied to any language, and even non-language
+sequences such as DNA and music. Character
+level n-gram models are widely used in text
+compression—e.g., the PPM model (T. Bell
+and Witten, 1990)—and have recently been
+found to be eﬀective in text mining problems
+as well (I. Witten and Teahan, 1999). Text cat-
+egorization with n-gram models has also been
+attempted by (Cavnar and Trenkle, 1994).
+
+3 Corpus
+We used a collection of student essays from the
+British Academic Written English (BAWE)
+corpus (Nesi et al., 2004). Only the pilot data
+for this corpus was available; it nominally con-
+sisted of 500 essays, though not all of these
+were suitable for inclusion. The metadata in-
+cluded for each essay consisted of information
+such as author gender, ﬁrst language, the grade
+received etc.
+
+Two essays were simply not present; oth-
+ers did not have metadata present indicating
+author gender. After these unacceptable es-
+says were excluded, 495 were left in the set.
+Within these, the average document length
+was 2,812 words or 17,994 characters, with
+1,391,710 words and 8,907,064 characters to-
+tal.
+
+4 Methodology
+4.1 Proﬁle Generation
+For each experiment, an individual proﬁle was
+created for each document in the test set us-
+ing the Perl module Text::NGrams. The cutoﬀ
+point for each individual proﬁle was 100,000
+N-grams; as no document had this number of
+unique N-grams, this implies that the proﬁle
+for each document was complete. Proﬁles were
+created using character, word, and part-of-
+speech tags as the tokens to be proﬁled. In the
+latter case, an additional experiment was per-
+formed after replacing non-function tags with
+an asterisk. Proﬁles were generated for N-
+grams of size 1 through 5 inclusive, with that
+
+size being the limit of computational feasibil-
+ity. No pre-processing of the data was per-
+formed; the documents were left as found in
+the corpus.
+
+4.2 Part-of-Speech Tagging
+
+Additional copies of the text were generated
+with words replaced by their part-of-speech
+tag. The tagging was performed automatically
+using the Perl module Lingua::EN::Tagger, a
+second-order Hidden Markov Model-based tag-
+ger. A further copy of the text was made
+with all non-function words removed, under
+the assumption that treating content-bearing
+words would not little meaning with respect
+to style. They were arbitrarily replaced by an
+asterisk. The speech categories considers as
+function words were: prepositions, pronouns,
+conjunctions, question adverbs (e.g.
+‘when’),
+interjections, and determiners.
+
+4.3 Training and Testing Sets
+
+20% each of the male and female lists, rounded
+up, were randomly selected; these documents
+would constitute the test set. There were 42
+male and 58 female-authored texts in this set,
+for a total of 100 essays. The remaining essays
+were taken as the training set.
+
+The ‘male’ and ‘female’ essays within this set
+were listed, and for each list, the proﬁles of that
+list’s members were combined. The combined
+proﬁles were then normalized so as to have a
+sum N-gram count equal to 1. See Table 1
+for a sample of the data produced. This step
+was performed for all N-gram sizes for which
+proﬁles had been generated.
+
+Table 1: Top ﬁve character bigrams from the
+female training set, showing both normalized
+and unnormalized values. Data has been
+truncated for presentation.
+
+4.4 Determining Closest Proﬁle
+For each of the 100 documents in the test set, a
+‘distance’ measurement was calculated to the
+trained ‘male’ and ‘female’ proﬁles. The dis-
+tance between two proﬁles was calculated as in
+(Keselj et al., 2003); the exact formula is given
+
+in equation 1.(cid:88)
+
+(cid:181)
+
+n  proﬁles
+
+(cid:182)2
+
+2(p1(n) − p2(n))
+p1(n) + p2(n)
+
+(1)
+
+Lower distances indicate a closer match; for
+each essay, the lower distance was printed as
+the system’s guess. The output was recorded
+and tested for accuracy, the results of which
+can be found in the next section.
+
+The experiment was repeated for various
+proﬁle cutoﬀ lengths; in each case, the merged
+test proﬁle was simply truncated after a given
+number of entries and the distance measure-
+ments re-run. Note that this will have no eﬀect
+once the cutoﬀ length exceeds the maximum
+proﬁle length, as there will be no items to be
+truncated at that point.
+
+5 Results
+
+5.1 Character N-Grams
+Both male and female authors had spaces as
+their most frequently-used character, followed
+by e,t,i, and a. Only minor diﬀerences fol-
+lowed thereafter — the proﬁles were very sim-
+ilar. This is to be expected, as are the poor
+results for unigrams in this category.
+
+An increase in the n size provided a notice-
+able improvement, reaching a peak accuracy
+of 76% is reached for an N of 4 and an L of
+20,000.
+
+Table 2: Results using character-based extrac-
+tion
+
+Normalized Unnormalized
+
+Proﬁle Length
+
+N-Gram Size
+
+1
+
+2
+
+3
+
+4
+
+5
+
+E
+0.03274
+T 0.02743
+0.02480
+S
+TH 0.02277
+A 0.01945
+
+121221
+101542
+91827
+84306
+72001
+
+100
+1000
+5000
+10000
+20000
+
+51% 67% 58% 59% 58%
+51% 69% 64% 63% 68%
+51% 69% 74% 73% 70%
+51% 69% 42% 74% 71%
+51% 69% 42% 76% 72%
+
+5.2 Word N-Grams
+The female authors appeared to have a slightly
+higher vocabulary than the male authors, with
+unique word counts of 31734 and 30186 respec-
+tively. The diﬀerent rises for word pairs, with
+277769 unique word pairs within the female
+training set, compared to 237417 in the male.
+This eﬀect may be partially explained by the
+larger number of female-authored documents.
+In general, the word-based categorization
+was highly successful, achieving a peak accu-
+racy of 81% is reached for an N of 4 and an L
+of 10,000–20,000.
+
+Table 3: Results using word-based extraction
+
+Proﬁle Length
+
+N-Gram Size
+
+1
+
+2
+
+3
+
+4
+
+5
+
+100
+1000
+2000
+5000
+10000
+15000
+
+64% 62% 73% 71% 65%
+70% 76% 72% 77% 74%
+75% 75% 73% 77% 74%
+74% 71% 74% 73% 74%
+73% 71% 75% 81% 74%
+73% 70% 73% 81% 77%
+
+5.3 Part-of-Speech N-Grams
+It has been suggested (Argamon et al., 2003)
+that part-of-speech N-grams can ‘eﬃciently en-
+code syntactical information’, and that this
+may be of use in style classiﬁcation. This is
+not unreasonable; the same source provides
+evidence for gender-based trends in part-of-
+speech tags. Speciﬁcally, the results for Table
+5.3 shows the results for these. A peak accu-
+racy of 76% is reached for an N of 5 and an
+L of 5,000. This is roughly comparable to the
+other results in this study.
+
+Table 4: Results using part-of-speech extrac-
+tion
+
+Proﬁle Length
+
+N-Gram Size
+
+1
+
+2
+
+3
+
+4
+
+5
+
+100
+500
+1000
+2000
+5000
+10000
+
+42% 64% 61% 52% 66%
+42% 63% 68% 68% 64%
+42% 62% 64% 66% 65%
+42% 58% 69% 68% 70%
+42% 58% 66% 71% 76%
+42% 58% 67% 72% 74%
+
+5.4 Function Word N-Grams
+It has been also previously suggested that func-
+tion words may be a strong determiner of au-
+thor characteristics (Zhao and Zobel, 2005).
+To test this, the experiment was run again on
+proﬁles for which non-function words had been
+replaced by an asterisk. The results of our test
+may be seen in Table 5.4.
+
+As with the full part-of-speech proﬁles, a
+peak accuracy of 76% is reached. This time,
+it is for an N of 4 and an L of 1,000. While
+the peak is the same, overall accuracy is lower
+than in Table 5.3.
+
+Table 5: Results using part-of-speech extrac-
+tion, with non-function words replaced by an
+asterisk
+
+Proﬁle Length
+
+N-Gram Size
+
+1
+
+2
+
+3
+
+4
+
+5
+
+100
+500
+1000
+2000
+5000
+10000
+
+42% 60% 58% 62% 63%
+42% 58% 72% 67% 61%
+42% 58% 67% 76% 59%
+42% 58% 64% 73% 59%
+42% 58% 42% 72% 70%
+42% 58% 42% 71% 72%
+
+6 Conclusion
+We have presented a method for automatic
+identiﬁcation of author gender based on n-
+gram proﬁles. The method is successful on this
+corpus; it would be desirable to try it on oth-
+ers to determine the versatility. Because no in-
+formation speciﬁc to this experiment has been
+used, it is likely that the techniques would be
+equally-applicable to other data sets. Further,
+the technique is not language-speciﬁc, suggest-
+ing is is probably applicable across languages.
+The use of part-of-speech tags had no sub-
+stantial eﬀect on the results, showing only a
+slight decrease. It is possible that with a more
+accurate tagger better results would be found.
+Although simple, in this case N-gram anal-
+ysis performs on par with other techniques,
+achieving a peak accuracy of 81%. For com-
+parative purposes, (Koppel et al., 2002) claim
+an accurate of ‘approximately 80%’.
+
+Acknowledgments
+We would like to thank the maintainers of the
+BAWE corpus for providing access to the pilot
+
+D. Khmelev and W. Teahan. 2003. A repetition
+based measure for veriﬁcation of text collections
+and for text categorization.
+In SIGIR’2003,
+Toronto, Canada.
+
+Moshe Koppel, Shlomo Argamon, and Anat Rachel
+Shimoni. 2002. Automatically categorizing writ-
+ten texts by author gender. Literary and Lin-
+guistic Computing, 17(4):401–412.
+
+and Lisa
+Hilary Nesi, Gerard
+Ganobcsik-Williams.
+Student papers
+across the curriculum: Designing and devel-
+oping a corpus of british student writing.
+Computers and Composition, 21(4):439–450.
+
+Sharpling,
+2004.
+
+R. Rickman and P. Rosin. 1996. Content-based
+image retrieval using colour n-grams. IEEE Col-
+loquium on Intelligent Image Databases, pages
+15/1–15/6.
+
+S. Scott and S. Matwin. 1999. Feature engineering
+for text classiﬁcation. In Proceedings ICML-99.
+
+E. Stamatatos, N. Fakotakis, and G. Kokkinakis.
+2001. Computer-based authorship attribution
+without lexical measures. Computers and the
+Humanities, 35:193–214.
+
+J. Cleary T. Bell and I. Witten. 1990. Text Com-
+
+pression. Prentice Hall.
+
+Ying Zhao and Justin Zobel.
+
+2005. Eﬀective
+and scalable authorship attribution using func-
+tion words. The 2nd Asia Information Retrieval
+Symposium.
+
+data used in this article. We would also like to
+acknowledge the contribution of three anony-
+mous reviewers, whose feedback has been help-
+ful.
+
+This research is supported by the Natural
+Sciences and Engineering Research Council of
+Canada.
+
+References
+
+A. Aizawa. 2001. Linguistic techniques to improve
+the performance of automatic text categoriza-
+tion. In Proceedings 6th NLP Pac. Rim Symp.
+NLPRS-01.
+
+Shlomo Argamon, Moshe Koppel, Jonathan Fine,
+and Anat Rachel Shimoni. 2003. Gender, genre,
+and writing style in formal written texts. Text,
+23(3):321–346.
+
+W. Cavnar and J. Trenkle. 1994. N-gram-based
+
+text categorization. In Proceedings SDAIR-94.
+
+Shyamala Doraisamy and Stefan Ruger.
+
+2003.
+Robust polyphonic music retrieval with n-
+grams. Journal of Intelligent Information Sys-
+tems, 21(1):53–70, July.
+
+N. Fakotakis E. Stamatatos and G. Kokkinakis.
+2000. Automatic text categorization in terms
+of genre and author. Computational Linguistics,
+26(4):471–495.
+
+M. Ephratt. 1997. Authorship attribution - the
+case of lexical innovations. In Proc. ACH-ALLC-
+97.
+
+Aidan Finn and Nicholas Kushmerick.
+
+2003.
+Learning to classify documents according to
+genre. In IJCAI-03 Workshop on Computational
+Approaches to Style Analysis and Synthesis.
+
+Stephen M. Harding, W. Bruce Croft, and C. Weir.
+1997. Probabilistic retrieval of ocr degraded text
+using n-grams. Probabilistic Retrieval of OCR
+Degraded Text Using N-Grams, 1324:345–359.
+
+M. Mahoui I. Witten, Z. Bray and W. Teahan.
+1999. Text mining: A new frontier for lossless
+compression. In Proceedings of the IEEE Data
+Compression Conference (DCC).
+
+Vlado Keselj, Fuchun Peng, Nick Cercone, and
+Calvin Thomas.
+2003. N-gram-based author
+proﬁles for authorship attribution. Proceedings
+of the Conference Paciﬁc Association for Com-
+putational Linguistics PACLING’03, August.
+
+
