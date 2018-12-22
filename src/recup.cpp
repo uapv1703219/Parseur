@@ -1,11 +1,10 @@
-#include <algorithm>
 #include <iostream>
-#include <stdlib.h>
+#include <string>
 #include <stdio.h>
 #include <fstream>
-#include "recup.h"
 
-#include <string>
+#include "recup.h"
+#include "Utilitaire.h"
 
 using namespace std;
 
@@ -15,13 +14,9 @@ recup::recup()
 	convert_path = "../CONVERT/";
 }
 
-void recup::ls() {
-
-	system(("ls " + paper_path + " > PapersList_temp.txt").c_str());
-}
-
-void recup::convert() {
-
+void recup::convert() 
+{
+	Utilitaire::ls(paper_path);
 	ifstream fichier("PapersList_temp.txt", ios::in);
 	if (fichier)
 	{
@@ -31,8 +26,8 @@ void recup::convert() {
 		{
 			name_fichier = ligne;
 			
-			name_fichier = remplacement(name_fichier);
-			ligne = remplacement(ligne);
+			name_fichier = Utilitaire::remplacement(name_fichier);
+			ligne = Utilitaire::remplacement(ligne);
 			name_fichier.erase(name_fichier.size() - 4);
 			system(("pdf2txt -o " + convert_path + name_fichier + ".txt " + paper_path + ligne).c_str());
 		}
@@ -42,20 +37,4 @@ void recup::convert() {
 		system("rm PapersList_temp.txt");
 	}
 	else cerr << "Impossible d'ouvrir le fichier !";
-}
-
-string recup::remplacement(string name)
-{
-	string temp;
-	size_t pos = 0;
-	string token;
-	while ((pos = name.find(" ")) != string::npos) 
-	{
-	    token = name.substr(0, pos);
-	    temp += token + "\\ ";
-	    name.erase(0, pos + 1);
-	}
-	temp += name;
-	//cout << temp << endl;
-	return temp;
 }

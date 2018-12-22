@@ -1,17 +1,12 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
 class recup
 {
-	public:
-	
+	private:
 	std::string paper_path;
 	std::string convert_path;
 
+	public:
 	recup();
-	void ls();
 	void convert();
-	std::string remplacement(std::string);
 };
