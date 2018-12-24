@@ -2,3 +2,4 @@
 bin/main.exe
 bin/PapersList_temp.txt
 bin/main.exe.stackdump
+*.txt
