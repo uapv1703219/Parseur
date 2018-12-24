@@ -1,5 +1,9 @@
-
 bin/main.exe
 bin/PapersList_temp.txt
 bin/main.exe.stackdump
 *.txt
+bin/Parseur
+bin/PapersList_temp.txt
+bin/Parse.o
+bin/recup.o
+bin/Utilitaire.o
