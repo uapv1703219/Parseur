@@ -26,8 +26,8 @@ void recup::convert()
 		{
 			name_fichier = ligne;
 			
-			name_fichier = Utilitaire::remplacement(name_fichier);
-			ligne = Utilitaire::remplacement(ligne);
+			name_fichier = Utilitaire::remplacement(name_fichier, " ", "\\ ");
+			ligne = Utilitaire::remplacement(ligne, " ", "\\ ");
 			name_fichier.erase(name_fichier.size() - 4);
 			system(("pdf2txt -o " + convert_path + name_fichier + ".txt " + paper_path + ligne).c_str());
 		}
