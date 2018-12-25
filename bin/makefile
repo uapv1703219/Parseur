@@ -1,5 +1,5 @@
 Parseur: ../src/main.cpp Parse.o recup.o Utilitaire.o
-	g++ -o Pareur ../src/main.cpp Utilitaire.o recup.o Parse.o
+	g++ -o Parseur ../src/main.cpp Utilitaire.o recup.o Parse.o
 
 Utilitaire.o: ../src/Utilitaire.cpp ../src/Utilitaire.h
 	g++ -c ../src/Utilitaire.cpp
