@@ -38,6 +38,22 @@ string Utilitaire::formatage(string name)
 	}
 }
 
+bool Utilitaire::foundWord(string name, string nomFichier)
+{
+	if(name.length() == 0)
+	{
+		return false;
+	}
+	for(int i = 0; i < 5; i++)
+	{
+		if(tolower(name[i]) != tolower(nomFichier[i]))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 string Utilitaire::to_lower(string name) 
 {
   	transform(name.begin(), name.end(), name.begin(), ::tolower);

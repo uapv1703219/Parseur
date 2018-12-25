@@ -9,42 +9,12 @@ Parse::Parse() {
   	this->txt_path = "../CONVERT/";
 }
 
-//titre erroner
-/*string Parse::recupTitre(string cheminFichier) 
-{
-	ifstream fichierConverti(cheminFichier, ios::in);
-  	string titre;
-  	if(fichierConverti)
-  	{
-  		getline(fichierConverti, titre);
-	  	do 
-	  	{
-			string bufferTitre;
-			getline(fichierConverti, bufferTitre);
-			if (bufferTitre == " ") continue;
-			else if (isupper(bufferTitre[0])) 
-			{
-		 		titre += " " + bufferTitre;
-		  		continue;
-			}
-		break;
-	  	} while(true);
-	  	fichierConverti.close();
-	}
-	else
-	{
-		cerr << "Impossible d'ouvrir le fichier !";
-		cerr << "Error: " << strerror(errno);
-	}
-	cerr << titre << endl;
-  	return titre;
-}*/
-
 string Parse::recupTitre(string cheminFichier, string nomFichier)
 {
 	nomFichier.erase(nomFichier.size() - 4);
 	string token;
 	size_t pos = 0;
+	// formater le nom de fichier
 	while ((pos = nomFichier.find('_')) != string::npos) 
 	{
     	token = nomFichier.substr(0, pos);
@@ -53,20 +23,29 @@ string Parse::recupTitre(string cheminFichier, string nomFichier)
 	ifstream fichierConverti(cheminFichier, ios::in);
 	string titre;
 	int cpt = 0;
-	bool controle = false;
 	if(fichierConverti)
 	{
-		getline(fichierConverti, titre);
+		// se placer aux bonnes endroits
+		while (getline(fichierConverti, titre))
+		{
+			if(Utilitaire::foundWord(titre,nomFichier) == true)
+				break;
+		}
+		int cpt;
+		bool controle = false;
 	  	do 
 	  	{
 			string bufferTitre;
 			getline(fichierConverti, bufferTitre);
-			if (bufferTitre == "") continue;
-			else if (isupper(bufferTitre[0]) &&  cpt < 1) 
+			if (bufferTitre == "" && cpt<2) 
+			{
+				cpt ++;
+				continue;
+			}
+			else if ((isupper(bufferTitre[0]) && controle==false) || (!isupper(bufferTitre[0] && controle == false))  && cpt < 2) 
 			{
 				controle = true;
 		 		titre += " " + bufferTitre;
-		 		cpt += 1;
 		  		continue;
 			}
 		break;
@@ -78,10 +57,7 @@ string Parse::recupTitre(string cheminFichier, string nomFichier)
 		cerr << "Impossible d'ouvrir le fichier !";
 		cerr << "Error: " << strerror(errno);
 	}
-	if(controle == true)
-    	return titre;
-	else
-   		return nomFichier;
+    return titre;
 }
 
 string Parse::recupResume(string cheminFichier) 
