@@ -10,7 +10,7 @@ private:
 
 public:
   	Parse();
-  	std::string recupTitre(std::string);
+  	std::string recupTitre(std::string, std::string);
   	std::string recupResume(std::string);
   	void exec();
 };

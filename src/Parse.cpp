@@ -10,7 +10,7 @@ Parse::Parse() {
 }
 
 //titre erroner
-string Parse::recupTitre(string cheminFichier) 
+/*string Parse::recupTitre(string cheminFichier) 
 {
 	ifstream fichierConverti(cheminFichier, ios::in);
   	string titre;
@@ -38,6 +38,50 @@ string Parse::recupTitre(string cheminFichier)
 	}
 	cerr << titre << endl;
   	return titre;
+}*/
+
+string Parse::recupTitre(string cheminFichier, string nomFichier)
+{
+	nomFichier.erase(nomFichier.size() - 4);
+	string token;
+	size_t pos = 0;
+	while ((pos = nomFichier.find('_')) != string::npos) 
+	{
+    	token = nomFichier.substr(0, pos);
+   		nomFichier.erase(0, pos + 1);
+	}
+	ifstream fichierConverti(cheminFichier, ios::in);
+	string titre;
+	int cpt = 0;
+	bool controle = false;
+	if(fichierConverti)
+	{
+		getline(fichierConverti, titre);
+	  	do 
+	  	{
+			string bufferTitre;
+			getline(fichierConverti, bufferTitre);
+			if (bufferTitre == "") continue;
+			else if (isupper(bufferTitre[0]) &&  cpt < 1) 
+			{
+				controle = true;
+		 		titre += " " + bufferTitre;
+		 		cpt += 1;
+		  		continue;
+			}
+		break;
+	  	} while(true);
+	  	fichierConverti.close();
+	}
+	else
+	{
+		cerr << "Impossible d'ouvrir le fichier !";
+		cerr << "Error: " << strerror(errno);
+	}
+	if(controle == true)
+    	return titre;
+	else
+   		return nomFichier;
 }
 
 string Parse::recupResume(string cheminFichier) 
@@ -79,7 +123,7 @@ void Parse::exec(){
 			if(fichierEcriture)
 			{
 				fichierEcriture << "Nom du fichier d'origine : " << ligne << endl;
-				fichierEcriture << "Titre : " << recupTitre(nameFormat) << endl;
+				fichierEcriture << "Titre : " << recupTitre(nameFormat, ligne) << endl;
 				fichierEcriture << "Resume : " << Utilitaire::formatage(recupResume(nameFormat)) << endl;
 				fichierEcriture.close();
 			}

@@ -5,7 +5,7 @@ using namespace std;
 
 int main()
 {
-/*	recup recuperation;s
+/*	recup recuperation;
 	recuperation.convert();*/
 
 	Parse parse;
