@@ -12,5 +12,8 @@ public:
   	Parse();
   	std::string recupTitre(std::string, std::string);
   	std::string recupResume(std::string);
-  	void exec();
+  	std::string recupAuteur(std::string, std::string);
+  	std::string recupBibliographie(std::string, std::string);
+  	void execTxt();
+  	void execXML();
 };
