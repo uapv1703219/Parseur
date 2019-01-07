@@ -7,64 +7,71 @@
 using namespace std;
 
 //traitement string
-string Utilitaire::remplacement(string name, string found, string remp)
+string Utilitaire::remplacement(string chaine, string found, string remp)
 {
 	string temp;
 	string token;
 	size_t pos = 0;
-	while ((pos = name.find(found)) != string::npos) 
+	while ((pos = chaine.find(found)) != string::npos) 
 	{
-	    token = name.substr(0, pos);
-	    temp += token + remp;
-	   	name.erase(0, pos + found.length());
+	    token = chaine.substr(0, pos);
+	    chaine += token + remp;
+	   	chaine.erase(0, pos + found.size());
 	}
-	temp += name;
+	temp += chaine;
 	return temp;
 }
 
-string Utilitaire::formatage(string name)
+string Utilitaire::formatage(string chaine)
 {
-	name = Utilitaire::remplacement(name,"\r", " ");
-	name = Utilitaire::remplacement(name, "- ", "");
+	chaine = Utilitaire::remplacement(chaine,"\r", " ");
+	chaine = Utilitaire::remplacement(chaine, "- ", "");
 
-	string tmp;
-	for(int i = 0; i < name.length(); i++)
+	for(int i = 0; i < chaine.size(); i++)
 	{
-		if (name.at(i) != ' ')
-		{
-			tmp = name.substr(i,name.length());
-			return tmp; 
-		}
+		if (chaine.at(i) != ' ')
+			return chaine.substr(i,chaine.size()); 
 	}
 }
 
-bool Utilitaire::foundWord(string name, string nomFichier)
+bool Utilitaire::foundWord(string chaine, string chaine2)
 {
-	if(name.length() == 0)
+	if(chaine.size() == 0)
 	{
 		return false;
 	}
 	for(int i = 0; i < 5; i++)
 	{
-		if(tolower(name[i]) != tolower(nomFichier[i]))
-		{
+		if(tolower(chaine[i]) != tolower(chaine2[i]))
 			return false;
-		}
 	}
 	return true;
 }
 
-string Utilitaire::to_lower(string name) 
+string Utilitaire::conversion(string chaine)
 {
-  	transform(name.begin(), name.end(), name.begin(), ::tolower);
-  	return name;
+	size_t pos = chaine.find("´");
+	string temp;
+	if(pos != string::npos)
+	{
+    	temp = chaine.substr(0, pos);
+   		chaine.erase(0, pos + 2);
+   		chaine = temp + chaine;
+	}
+	return chaine;
 }
 
-bool Utilitaire::isEmpty(string name) 
+string Utilitaire::to_lower(string chaine) 
 {
-  	for (int i = 0; i < name.size(); i++) 
+  	transform(chaine.begin(), chaine.end(), chaine.begin(), ::tolower);
+  	return chaine;
+}
+
+bool Utilitaire::isEmpty(string chaine) 
+{
+  	for (int i = 0; i < chaine.size(); i++) 
   	{
-		if (isalnum(name[i])) 
+		if (isalnum(chaine[i])) 
 			return false;
   	}
  	return true;
@@ -73,5 +80,5 @@ bool Utilitaire::isEmpty(string name)
 //traitement parcours fichiers
 void Utilitaire::ls(string path)
 {
-	 system(("ls " + path + " > PapersList_temp.txt").c_str());
+	system(("ls " + path + " > PapersList_temp.txt").c_str());
 }

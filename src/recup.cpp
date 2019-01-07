@@ -16,6 +16,7 @@ recup::recup()
 
 void recup::convert() 
 {
+	system("rm -R ../CONVERT/*");
 	Utilitaire::ls(paper_path);
 	ifstream fichier("PapersList_temp.txt", ios::in);
 	if (fichier)
@@ -29,7 +30,7 @@ void recup::convert()
 			name_fichier = Utilitaire::remplacement(name_fichier, " ", "\\ ");
 			ligne = Utilitaire::remplacement(ligne, " ", "\\ ");
 			name_fichier.erase(name_fichier.size() - 4);
-			system(("pdf2txt.py -o " + convert_path + name_fichier + ".txt " + paper_path + ligne).c_str());
+			system(("pdf2txt -o " + convert_path + name_fichier + ".txt " + paper_path + ligne).c_str());
 		}
 		
 		fichier.close();
