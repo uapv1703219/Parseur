@@ -131,13 +131,122 @@ string Parse::recupBibliographie(string cheminFichier, string auteur)
 		{
 			if(bufferBiblio.find(auteur) != string::npos)
 				break;
-			biblio += bufferBiblio;
+			biblio += bufferBiblio + " ";
+			if(biblio[biblio.size()-1] == '-')
+			{
+				biblio.erase(biblio.size() - 1);
+			}
+			else if(biblio[biblio.size()-1] !=  ' ')
+			{
+				biblio += " ";
+			}
 		}
 	}
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
 	biblio.erase(biblio.size() - 1);
 	return biblio;
+}
+
+string Parse::recupConclusion(string cheminFichier)
+{
+	cerr << cheminFichier << endl;
+	string conclu = "";
+	ifstream fichierConverti(cheminFichier, ios::in);
+	string mot;
+	bool controle = false;
+	if(fichierConverti)
+	{
+		while(true)
+		{
+			getline(fichierConverti, mot);
+			mot = Utilitaire::to_lower(mot);
+			if(mot.size() == 0)
+			{
+				controle = true;
+				continue;
+			}
+			if(mot.find("conclusion") != string::npos && controle == true && isdigit(mot[0]))
+			{
+				// romain point à enlever !!! URGENT
+				break;
+			}
+			else
+				controle = false;
+		}
+		string bufferConclusion;
+		string bufferTemp;
+		int compteur = 0;
+		while(getline(fichierConverti, bufferConclusion))
+		{
+			bufferTemp = Utilitaire::to_lower(bufferConclusion);
+			if(bufferTemp.find("references") != string::npos || bufferTemp.find("acknowledgment") != string::npos)
+				break;
+			else if (bufferConclusion.find("\f") != string::npos)
+			{
+				compteur = 2;
+				continue;
+			}
+			if(compteur > 0)
+			{
+				compteur -= 1;
+				continue;
+			}
+			conclu += bufferConclusion;
+			if(conclu[conclu.size()-1] == '-')
+			{
+				conclu.erase(conclu.size() - 1);
+			}
+			else if(conclu[conclu.size()-1] !=  ' ')
+			{
+				conclu += " ";
+			}
+		}
+	}
+	else
+		cerr << "Impossible d'ouvrir le fichier !";
+	conclu.erase(conclu.size() - 1);
+	return conclu;
+}
+
+string Parse::recupDiscussion(string cheminFichier)
+{
+	string discu = "";
+	ifstream fichierConverti(cheminFichier, ios::in);
+	string mot;
+	string bufferTemp;
+	bool controle;
+	if(fichierConverti)
+	{
+		while(getline(fichierConverti, mot))
+		{
+			if(mot.find("Discussion") != string::npos )
+			{
+				string bufferDiscussion;
+				string bufferTemp;
+				while(getline(fichierConverti,bufferDiscussion))
+				{
+					bufferTemp = Utilitaire::to_lower(bufferDiscussion);
+					if(bufferTemp.find("conclusion") != string::npos)
+						break;
+					discu += bufferDiscussion;
+					if(discu[discu.size()-1] == '-')
+					{
+						discu.erase(discu.size() - 1);
+					}
+					else if(discu[discu.size()-1] !=  ' ')
+					{
+						discu += " ";
+					}
+				}
+				discu.erase(discu.size() - 1);
+				break;
+			}
+		}
+	}
+	else
+		cerr << "Impossible d'ouvrir le fichier !";
+	return discu;
 }
 
 void Parse::execTxt(){
@@ -190,13 +299,15 @@ void Parse::execXML(){
 			if(fichierEcriture)
 			{
 				string auteur = recupAuteur(nameFormat, ligne);
-				fichierEcriture << "<?xml version=\"1.0\"? encoding=\"UTF-8\"?>" << endl;
+				fichierEcriture << "<?xml version = \"1.0\" encoding=\"UTF-8\"?>" << endl;
 				fichierEcriture << "<article>" << endl;
 				fichierEcriture << "\t <preamble> " << ligne << " </preamble>" << endl;
 				fichierEcriture << "\t <titre> " << recupTitre(nameFormat, ligne) << " </titre>" << endl;
 				fichierEcriture << "\t <auteur> " << auteur << " </auteur>" << endl;
 				fichierEcriture << "\t <abstract> " << Utilitaire::formatage(recupResume(nameFormat)) << " </abstract>" << endl;
-				fichierEcriture << "\t <biblio> " << recupBibliographie(nameFormat, auteur) << " </biblio>" << endl;
+				fichierEcriture << "\t <conclusion>" << recupConclusion(nameFormat) << " </conclusion>" << endl;  
+				fichierEcriture << "\t <discussion>" << recupDiscussion(nameFormat) << " </discussion>" << endl;
+				fichierEcriture << "\t <biblio>" << recupBibliographie(nameFormat, auteur) << " </biblio>" << endl;
 				fichierEcriture << "</article>";
 				fichierEcriture.close();
 			}

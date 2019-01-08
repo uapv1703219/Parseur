@@ -48,6 +48,7 @@ bool Utilitaire::foundWord(string chaine, string chaine2)
 	return true;
 }
 
+
 string Utilitaire::conversion(string chaine)
 {
 	size_t pos = chaine.find("´");
