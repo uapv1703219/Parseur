@@ -9,8 +9,8 @@ int main (int argc, char *argv[])
 {
 	if(argc < 2)
 	{
-		cout << "Arguments manquants, arguments possible : -t, -x" << endl;
-		return EXIT_FAILURE ;
+		cout << "arguments possible : -t, -x -c, -x -n" << endl;
+		return EXIT_FAILURE;
 	}
 	recup recuperation;
 	//recuperation.convert();
@@ -22,12 +22,27 @@ int main (int argc, char *argv[])
 	}
 	else if(strcmp(argv[1],"-x") == 0)
 	{
-		//traiter XML
-		parse.execXML();
+		if(strcmp(argv[2], "-n") == 0)
+		{
+			//traiter XML non complet
+			parse.execXML();
+		}
+		else if(strcmp(argv[2], "-c") == 0)
+		{
+			//traiter XML complet
+			parse.execXML2();
+		}
+		else
+		{
+			cout << "Arguments incorrecte, arguments possible : -t, -x -c, -x -n" << endl;
+			cout << "-x -n pour XML non complet, -x -c pour XML complet(introduction, corps, conclusion et discussion)" << endl;
+			return EXIT_FAILURE ;
+		}
 	}
 	else
 	{
-		cout << "Arguments incorrecte, arguments possible : -t, -x" << endl;
+		cout << "Arguments incorrecte, arguments possible : -t, -x -c, -x -n" << endl;
+		cout << "-x -n pour XML non complet, -x -c pour XML complet(introduction, corps, conclusion et discussion)" << endl;
 		return EXIT_FAILURE ;
 	}	
 

@@ -48,7 +48,6 @@ bool Utilitaire::foundWord(string chaine, string chaine2)
 	return true;
 }
 
-
 string Utilitaire::conversion(string chaine)
 {
 	size_t pos = chaine.find("´");
@@ -60,6 +59,33 @@ string Utilitaire::conversion(string chaine)
    		chaine = temp + chaine;
 	}
 	return chaine;
+}
+
+bool Utilitaire::findCaractereNonAlphabetique(string chaine)
+{
+	if(chaine.size() == 0)
+		return false;
+	else if (chaine.find("www.") != string::npos)
+		return false;
+	for(int i = 0; i < chaine.size(); i++)
+	{
+		if(isdigit(chaine[i]))
+			return false;
+	}
+	return true;
+}
+
+bool Utilitaire::controleRomain(string chaine)
+{
+	for(int i = 0; i < chaine.size(); i++)
+	{
+		if(chaine[i] == 'i' || chaine[i] == 'v' || chaine[i] == 'x')
+			continue;
+		else if(chaine[i] == '.')
+			return true;
+		else
+			return false;
+	}
 }
 
 string Utilitaire::to_lower(string chaine) 

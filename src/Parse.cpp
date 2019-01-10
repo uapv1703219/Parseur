@@ -12,45 +12,38 @@ Parse::Parse() {
 
 string Parse::recupTitre(string cheminFichier, string nomFichier)
 {
-	string auteur = recupAuteur(cheminFichier,nomFichier);
-	nomFichier.erase(nomFichier.size() - 4);
-	size_t pos = 0;
-	// formater le nom de fichier
-	while ((pos = nomFichier.find('_')) != string::npos) 
-	{
-    	nomFichier.substr(0, pos);
-   		nomFichier.erase(0, pos + 1);
-	}
 	ifstream fichierConverti(cheminFichier, ios::in);
+	string auteur = recupAuteur(cheminFichier,nomFichier);
 	string titre;
 	if(fichierConverti)
 	{
-		// se placer à la bonne position
-		while (getline(fichierConverti, titre))
-			if(Utilitaire::foundWord(titre,nomFichier))
-				break;
-		bool controle = false;
-	  	do 
-	  	{
-			string bufferTitre;
-			getline(fichierConverti, bufferTitre);
-			if (bufferTitre == "") 
-				continue;
-			else if (!controle)
+		while(getline(fichierConverti, titre))
+		{
+			if(Utilitaire::findCaractereNonAlphabetique(titre))
 			{
-				if(Utilitaire::foundWord(bufferTitre,auteur))
-					break;
-				controle = true;
-		 		titre += " " + bufferTitre;
-		  		continue;
+				bool controle;
+				string bufferTitre;
+				while(getline(fichierConverti, bufferTitre))
+				{
+					if (bufferTitre == "") 
+						continue;
+					else if (!controle)
+					{
+						if(Utilitaire::foundWord(bufferTitre,auteur))
+							break;
+						controle = true;
+		 				titre += " " + bufferTitre;
+		  				continue;
+		  			}
+				}
+				break;
 			}
-		break;
-	  	} while(true);
-	  	fichierConverti.close();
+		}
+		fichierConverti.close();
 	}
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
-    return titre;
+	return titre;
 }
 
 string Parse::recupResume(string cheminFichier) 
@@ -75,6 +68,7 @@ string Parse::recupResume(string cheminFichier)
 				break;
 			resume += bufferResume;
 		}
+		fichierConverti.close();
 	}
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
@@ -112,6 +106,48 @@ string Parse::recupAuteur(string cheminFichier, string nomFichier)
 	return auteur;
 }
 
+bool controleAuteur(string chaine)
+{
+	string temp;
+	string token;
+	size_t pos = 0;
+	while ((pos = chaine.find(" ")) != string::npos) 
+	{
+	    token = chaine.substr(0, pos);
+	    if(isupper(token[0]))
+	    	continue;
+	    else
+	    	return false;
+	    chaine += token;
+	   	chaine.erase(0, pos + 1);
+	}
+	temp += chaine;
+	return true;
+}
+
+string Parse::recupAuteur2(string cheminFichier, string titre)
+{
+	ifstream fichierConverti(cheminFichier, ios::in);
+	string auteur;
+	string bufferTemp;
+	if(fichierConverti)
+	{
+		while(getline(fichierConverti, auteur))
+		{
+			if(Utilitaire::to_lower(auteur).find("abstract") != string::npos)
+				break;
+			else if(auteur.find("@") != string::npos)
+				continue;
+			else if(auteur != "" && auteur != " ")
+				bufferTemp = auteur;
+		}
+		fichierConverti.close();
+	}
+	else
+		cerr << "Impossible d'ouvrir le fichier !";
+	return bufferTemp;
+}
+
 string Parse::recupBibliographie(string cheminFichier, string auteur)
 {
 	string biblio = "";
@@ -141,6 +177,7 @@ string Parse::recupBibliographie(string cheminFichier, string auteur)
 				biblio += " ";
 			}
 		}
+		fichierConverti.close();
 	}
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
@@ -150,7 +187,6 @@ string Parse::recupBibliographie(string cheminFichier, string auteur)
 
 string Parse::recupConclusion(string cheminFichier)
 {
-	cerr << cheminFichier << endl;
 	string conclu = "";
 	ifstream fichierConverti(cheminFichier, ios::in);
 	string mot;
@@ -166,9 +202,8 @@ string Parse::recupConclusion(string cheminFichier)
 				controle = true;
 				continue;
 			}
-			if(mot.find("conclusion") != string::npos && controle == true && isdigit(mot[0]))
+			if(mot.find("conclusion") != string::npos && controle == true && (isdigit(mot[0]) || (mot.find("\f") != string::npos ) || Utilitaire::controleRomain(mot)))
 			{
-				// romain point à enlever !!! URGENT
 				break;
 			}
 			else
@@ -202,6 +237,7 @@ string Parse::recupConclusion(string cheminFichier)
 				conclu += " ";
 			}
 		}
+		fichierConverti.close();
 	}
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
@@ -243,6 +279,7 @@ string Parse::recupDiscussion(string cheminFichier)
 				break;
 			}
 		}
+		fichierConverti.close();
 	}
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
@@ -299,11 +336,53 @@ void Parse::execXML(){
 			if(fichierEcriture)
 			{
 				string auteur = recupAuteur(nameFormat, ligne);
+				string titre = recupTitre(nameFormat, ligne);
 				fichierEcriture << "<?xml version = \"1.0\" encoding=\"UTF-8\"?>" << endl;
 				fichierEcriture << "<article>" << endl;
 				fichierEcriture << "\t <preamble> " << ligne << " </preamble>" << endl;
-				fichierEcriture << "\t <titre> " << recupTitre(nameFormat, ligne) << " </titre>" << endl;
-				fichierEcriture << "\t <auteur> " << auteur << " </auteur>" << endl;
+				fichierEcriture << "\t <titre> " << titre << " </titre>" << endl;
+				fichierEcriture << "\t <auteur> " << recupAuteur2(nameFormat, titre) << " </auteur>" << endl;
+				fichierEcriture << "\t <abstract> " << Utilitaire::formatage(recupResume(nameFormat)) << " </abstract>" << endl;
+				fichierEcriture << "\t <biblio>" << recupBibliographie(nameFormat, auteur) << " </biblio>" << endl;
+				fichierEcriture << "</article>";
+				fichierEcriture.close();
+			}
+			else 
+				cerr << "Impossible d'ouvrir le fichier !";
+		}
+		fichier.close();
+		system("rm PapersList_temp.txt");
+	}
+	else 
+		cerr << "Impossible d'ouvrir le fichier !";
+}
+
+void Parse::execXML2(){
+    Utilitaire::ls(txt_path);
+    system("rm -Rf ../PARSE");
+    system("mkdir ../PARSE");
+	ifstream fichier("PapersList_temp.txt", ios::in);
+	if (fichier)
+	{
+		string ligne;
+		string nameFormat;
+		string nameFormat2;
+		while(getline(fichier, ligne))
+		{
+			nameFormat = txt_path + ligne;
+			nameFormat2 = ligne;
+			nameFormat2.erase(nameFormat2.size() - 3);
+			nameFormat2 += "xml";
+			ofstream fichierEcriture("../PARSE/" + nameFormat2, ios::out | ios::trunc);
+			if(fichierEcriture)
+			{
+				string auteur = recupAuteur(nameFormat, ligne);
+				string titre = recupTitre(nameFormat, ligne);
+				fichierEcriture << "<?xml version = \"1.0\" encoding=\"UTF-8\"?>" << endl;
+				fichierEcriture << "<article>" << endl;
+				fichierEcriture << "\t <preamble> " << ligne << " </preamble>" << endl;
+				fichierEcriture << "\t <titre> " << titre << " </titre>" << endl;
+				fichierEcriture << "\t <auteur> " << recupAuteur2(nameFormat,titre) << " </auteur>" << endl;
 				fichierEcriture << "\t <abstract> " << Utilitaire::formatage(recupResume(nameFormat)) << " </abstract>" << endl;
 				fichierEcriture << "\t <conclusion>" << recupConclusion(nameFormat) << " </conclusion>" << endl;  
 				fichierEcriture << "\t <discussion>" << recupDiscussion(nameFormat) << " </discussion>" << endl;
