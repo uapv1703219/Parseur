@@ -106,25 +106,6 @@ string Parse::recupAuteur(string cheminFichier, string nomFichier)
 	return auteur;
 }
 
-bool controleAuteur(string chaine)
-{
-	string temp;
-	string token;
-	size_t pos = 0;
-	while ((pos = chaine.find(" ")) != string::npos) 
-	{
-	    token = chaine.substr(0, pos);
-	    if(isupper(token[0]))
-	    	continue;
-	    else
-	    	return false;
-	    chaine += token;
-	   	chaine.erase(0, pos + 1);
-	}
-	temp += chaine;
-	return true;
-}
-
 string Parse::recupAuteur2(string cheminFichier, string titre)
 {
 	ifstream fichierConverti(cheminFichier, ios::in);
@@ -132,19 +113,27 @@ string Parse::recupAuteur2(string cheminFichier, string titre)
 	string bufferTemp;
 	if(fichierConverti)
 	{
-		while(getline(fichierConverti, auteur))
+		while(getline(fichierConverti, bufferTemp))
 		{
-			if(Utilitaire::to_lower(auteur).find("abstract") != string::npos)
+			if(Utilitaire::findCaractereNonAlphabetique(bufferTemp))
+			{
+				while(getline(fichierConverti, auteur))
+				{
+					if(Utilitaire::to_lower(auteur).find("abstract") != string::npos || auteur.size() == 1)
+						break;
+					else if(auteur.find("@") != string::npos)
+						continue;
+					else if(auteur != "" && auteur != " ")
+						bufferTemp += " " + auteur;
+				}
 				break;
-			else if(auteur.find("@") != string::npos)
-				continue;
-			else if(auteur != "" && auteur != " ")
-				bufferTemp = auteur;
+			}
 		}
 		fichierConverti.close();
 	}
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
+	bufferTemp = Utilitaire::suppressionTitre(bufferTemp,titre);
 	return bufferTemp;
 }
 
@@ -182,6 +171,7 @@ string Parse::recupBibliographie(string cheminFichier, string auteur)
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
 	biblio.erase(biblio.size() - 1);
+	biblio = Utilitaire::remplacement(biblio,"\f", " ");
 	return biblio;
 }
 
@@ -242,6 +232,7 @@ string Parse::recupConclusion(string cheminFichier)
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
 	conclu.erase(conclu.size() - 1);
+	conclu = Utilitaire::remplacement(conclu,"\f", " ");
 	return conclu;
 }
 
@@ -283,6 +274,7 @@ string Parse::recupDiscussion(string cheminFichier)
 	}
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
+	discu = Utilitaire::remplacement(discu,"\f", " ");
 	return discu;
 }
 

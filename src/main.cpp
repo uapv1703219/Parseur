@@ -13,7 +13,9 @@ int main (int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 	recup recuperation;
-	//recuperation.convert();
+	vector<string> bufferText;
+	// bufferText = recuperation.menu();
+	// recuperation.convert(bufferText);
 	Parse parse;
 	if(strcmp(argv[1],"-t") == 0)
 	{

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 class recup
 {
@@ -10,5 +11,7 @@ class recup
 
 	public:
 	recup();
-	void convert();
+	void affichage(std::vector<std::string>);
+	std::vector<std::string> menu();
+	void convert(std::vector<std::string>);
 };

@@ -4,6 +4,8 @@ Compilation à effectuer dans bin grâce au makefile. Execution à effectuer dan
 Mettre les PDF dans Papers
 Utilisation du pdf2txt pour convertir de pdf à txt et après parser programmer en C++ pour passé soit dans un fichier .txt soit dans un fichier .xml
 
+Pour lire le XML gonzalez : utiliser nano / sublime text etc... PAS GEANY
+
 Furnon Claire
 Bisotto Maxime
 Lamoureux Kevin

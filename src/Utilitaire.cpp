@@ -9,17 +9,20 @@ using namespace std;
 //traitement string
 string Utilitaire::remplacement(string chaine, string found, string remp)
 {
+	if(chaine.size() == 0)
+		return chaine;
 	string temp;
 	string token;
+	string bufferText;
 	size_t pos = 0;
 	while ((pos = chaine.find(found)) != string::npos) 
 	{
 	    token = chaine.substr(0, pos);
-	    chaine += token + remp;
+	    bufferText += token + remp;
 	   	chaine.erase(0, pos + found.size());
 	}
-	temp += chaine;
-	return temp;
+	bufferText += chaine;
+	return bufferText;
 }
 
 string Utilitaire::formatage(string chaine)
@@ -58,6 +61,14 @@ string Utilitaire::conversion(string chaine)
    		chaine.erase(0, pos + 2);
    		chaine = temp + chaine;
 	}
+	return chaine;
+}
+
+string Utilitaire::suppressionTitre(string chaine, string titre)
+{
+	size_t pos;
+	if(pos = chaine.find(titre) != string::npos)
+		chaine.erase(0, pos + titre.size());
 	return chaine;
 }
 
