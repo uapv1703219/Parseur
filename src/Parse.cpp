@@ -371,8 +371,8 @@ void Parse::execXML(){
 			ofstream fichierEcriture("../PARSE/" + nameFormat2, ios::out | ios::trunc);
 			if(fichierEcriture)
 			{
-				string auteur = recupAuteur2(nameFormat, ligne);
-				string titre = recupTitre(nameFormat, auteur);
+				string titre = recupTitre(nameFormat, titre);
+				string auteur = recupAuteur2(nameFormat, titre);
 				fichierEcriture << "<?xml version = \"1.0\" encoding=\"UTF-8\"?>" << endl;
 				fichierEcriture << "<article>" << endl;
 				fichierEcriture << "\t <preamble> " << ligne << " </preamble>" << endl;
