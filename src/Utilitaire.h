@@ -1,6 +1,6 @@
 #pragma once
 
-class Utilitaire 
+class Utilitaire
 {
 	public:
 		static std::string remplacement(std::string, std::string, std::string);
@@ -13,4 +13,5 @@ class Utilitaire
 		static bool controleRomain(std::string);
 		static bool isEmpty(std::string);
 		static void ls(std::string);
+		static bool suivantEstMajuscule(std::string, int);
 };

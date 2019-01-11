@@ -15,7 +15,7 @@ string Utilitaire::remplacement(string chaine, string found, string remp)
 	string token;
 	string bufferText;
 	size_t pos = 0;
-	while ((pos = chaine.find(found)) != string::npos) 
+	while ((pos = chaine.find(found)) != string::npos)
 	{
 	    token = chaine.substr(0, pos);
 	    bufferText += token + remp;
@@ -33,7 +33,7 @@ string Utilitaire::formatage(string chaine)
 	for(int i = 0; i < chaine.size(); i++)
 	{
 		if (chaine.at(i) != ' ')
-			return chaine.substr(i,chaine.size()); 
+			return chaine.substr(i,chaine.size());
 	}
 }
 
@@ -99,17 +99,17 @@ bool Utilitaire::controleRomain(string chaine)
 	}
 }
 
-string Utilitaire::to_lower(string chaine) 
+string Utilitaire::to_lower(string chaine)
 {
   	transform(chaine.begin(), chaine.end(), chaine.begin(), ::tolower);
   	return chaine;
 }
 
-bool Utilitaire::isEmpty(string chaine) 
+bool Utilitaire::isEmpty(string chaine)
 {
-  	for (int i = 0; i < chaine.size(); i++) 
+  	for (int i = 0; i < chaine.size(); i++)
   	{
-		if (isalnum(chaine[i])) 
+		if (isalnum(chaine[i]))
 			return false;
   	}
  	return true;
@@ -119,4 +119,12 @@ bool Utilitaire::isEmpty(string chaine)
 void Utilitaire::ls(string path)
 {
 	system(("ls " + path + " > PapersList_temp.txt").c_str());
+}
+
+bool Utilitaire::suivantEstMajuscule(string chaine, int i) {
+	for (; i < chaine.size(); ++i) {
+		if (isalpha(chaine[i])) {
+			return isupper(chaine[i]);
+		}
+	}
 }
