@@ -14,8 +14,8 @@ int main (int argc, char *argv[])
 	}
 	recup recuperation;
 	vector<string> bufferText;
-	// bufferText = recuperation.menu();
-	// recuperation.convert(bufferText);
+	bufferText = recuperation.menu();
+	recuperation.convert(bufferText);
 	Parse parse;
 	if(strcmp(argv[1],"-t") == 0)
 	{
