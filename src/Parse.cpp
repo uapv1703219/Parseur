@@ -25,7 +25,7 @@ string Parse::recupTitre(string cheminFichier, string nomFichier)
 				string bufferTitre;
 				while(getline(fichierConverti, bufferTitre))
 				{
-					if (bufferTitre == "") 
+					if (bufferTitre == "")
 						continue;
 					else if (!controle)
 					{
@@ -46,25 +46,25 @@ string Parse::recupTitre(string cheminFichier, string nomFichier)
 	return titre;
 }
 
-string Parse::recupResume(string cheminFichier) 
+string Parse::recupResume(string cheminFichier)
 {
 	string resume = "";
 	ifstream fichierConverti(cheminFichier, ios::in);
 	string mot;
 	if(fichierConverti)
 	{
-		while (true) 
+		while (true)
 		{
 			fichierConverti >> mot;
 			mot = Utilitaire::to_lower(mot);
-			if (mot.find("abstract") != string::npos || mot.find("resume") != string::npos) 
+			if (mot.find("abstract") != string::npos || mot.find("resume") != string::npos)
 				break;
 		}
 		string bufferResume;
-		while (true) 
+		while (true)
 		{
 			getline(fichierConverti, bufferResume);
-			if (Utilitaire::isEmpty(bufferResume) && !Utilitaire::isEmpty(resume)) 
+			if (Utilitaire::isEmpty(bufferResume) && !Utilitaire::isEmpty(resume))
 				break;
 			resume += bufferResume;
 		}
@@ -73,6 +73,42 @@ string Parse::recupResume(string cheminFichier)
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
 	return resume;
+}
+
+string Parse::recupIntro(string cheminFichier)
+{
+	string intro = "";
+	ifstream fichierConverti(cheminFichier, ios::in);
+	string mot;
+	if(fichierConverti)
+	{
+		while (true)
+		{
+			fichierConverti >> mot;
+			mot = Utilitaire::to_lower(mot);
+			if (mot.find("introduction") != string::npos)
+				break;
+		}
+		string bufferIntro;
+		while (true)
+		{
+			getline(fichierConverti, bufferIntro);
+      if (bufferIntro.find('\f') != std::string::npos) {
+        do {
+        	getline(fichierConverti, bufferIntro);
+        } while (bufferIntro == "");
+      }
+      else if (estFinIntro(bufferIntro)) {
+        return intro;
+      }
+      else {
+        intro += bufferIntro;
+      }
+		}
+	}
+	else
+		cerr << "Impossible d'ouvrir le fichier !";
+	return intro;
 }
 
 string Parse::recupAuteur(string cheminFichier, string nomFichier)
@@ -111,7 +147,7 @@ bool controleAuteur(string chaine)
 	string temp;
 	string token;
 	size_t pos = 0;
-	while ((pos = chaine.find(" ")) != string::npos) 
+	while ((pos = chaine.find(" ")) != string::npos)
 	{
 	    token = chaine.substr(0, pos);
 	    if(isupper(token[0]))
@@ -155,7 +191,7 @@ string Parse::recupBibliographie(string cheminFichier, string auteur)
 	string mot;
 	if(fichierConverti)
 	{
-		while (true) 
+		while (true)
 		{
 			getline(fichierConverti, mot);
 			mot = Utilitaire::to_lower(mot);
@@ -163,7 +199,7 @@ string Parse::recupBibliographie(string cheminFichier, string auteur)
 				break;
 		}
 		string bufferBiblio;
-		while (getline(fichierConverti, bufferBiblio)) 
+		while (getline(fichierConverti, bufferBiblio))
 		{
 			if(bufferBiblio.find(auteur) != string::npos)
 				break;
@@ -308,16 +344,17 @@ void Parse::execTxt(){
 			}
 			else cerr << "Impossible d'ouvrir le fichier !";
 		}
-		
+
 		fichier.close();
 		system("rm PapersList_temp.txt");
 	}
-	else 
+	else
 		cerr << "Impossible d'ouvrir le fichier !";
 }
 
 void Parse::execXML(){
     Utilitaire::ls(txt_path);
+    cout << "systeme";
     system("rm -Rf ../PARSE");
     system("mkdir ../PARSE");
 	ifstream fichier("PapersList_temp.txt", ios::in);
@@ -326,6 +363,7 @@ void Parse::execXML(){
 		string ligne;
 		string nameFormat;
 		string nameFormat2;
+    cout << "erreur?";
 		while(getline(fichier, ligne))
 		{
 			nameFormat = txt_path + ligne;
@@ -347,13 +385,13 @@ void Parse::execXML(){
 				fichierEcriture << "</article>";
 				fichierEcriture.close();
 			}
-			else 
+			else
 				cerr << "Impossible d'ouvrir le fichier !";
 		}
 		fichier.close();
 		system("rm PapersList_temp.txt");
 	}
-	else 
+	else
 		cerr << "Impossible d'ouvrir le fichier !";
 }
 
@@ -384,18 +422,31 @@ void Parse::execXML2(){
 				fichierEcriture << "\t <titre> " << titre << " </titre>" << endl;
 				fichierEcriture << "\t <auteur> " << recupAuteur2(nameFormat,titre) << " </auteur>" << endl;
 				fichierEcriture << "\t <abstract> " << Utilitaire::formatage(recupResume(nameFormat)) << " </abstract>" << endl;
-				fichierEcriture << "\t <conclusion>" << recupConclusion(nameFormat) << " </conclusion>" << endl;  
+        fichierEcriture << "\t <intro> " << recupIntro(nameFormat) << " </intro>" << endl;
+				fichierEcriture << "\t <conclusion>" << recupConclusion(nameFormat) << " </conclusion>" << endl;
 				fichierEcriture << "\t <discussion>" << recupDiscussion(nameFormat) << " </discussion>" << endl;
 				fichierEcriture << "\t <biblio>" << recupBibliographie(nameFormat, auteur) << " </biblio>" << endl;
 				fichierEcriture << "</article>";
 				fichierEcriture.close();
 			}
-			else 
+			else
 				cerr << "Impossible d'ouvrir le fichier !";
 		}
 		fichier.close();
 		system("rm PapersList_temp.txt");
 	}
-	else 
+	else
 		cerr << "Impossible d'ouvrir le fichier !";
+}
+
+bool Parse::estFinIntro(string ligne) {
+  for (int i = 0; i < ligne.size(); ++i) {
+    if (isalnum(ligne[i])) {
+      if(ligne[i] == '2' || (ligne[i] == 'I' && ligne[i] == 'I')) {
+        return Utilitaire::suivantEstMajuscule(ligne, 0);
+      }
+      return false;
+    }
+  }
+  return false;
 }
