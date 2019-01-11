@@ -12,8 +12,10 @@ public:
   	Parse();
   	std::string recupTitre(std::string, std::string);
   	std::string recupResume(std::string);
+    std::string recupIntro(std::string);
   	std::string recupAuteur(std::string, std::string);
   	std::string recupBibliographie(std::string, std::string);
   	void execTxt();
   	void execXML();
+    bool estFinIntro(std::string);
 };
