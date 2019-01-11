@@ -7,7 +7,7 @@
 using namespace std;
 
 Parse::Parse() {
-  	this->txt_path = "../CONVERT/";
+	this->txt_path = "../CONVERT/";
 }
 
 string Parse::recupTitre(string cheminFichier, string nomFichier)
@@ -32,9 +32,9 @@ string Parse::recupTitre(string cheminFichier, string nomFichier)
 						if(Utilitaire::foundWord(bufferTitre,auteur))
 							break;
 						controle = true;
-		 				titre += " " + bufferTitre;
-		  				continue;
-		  			}
+						titre += " " + bufferTitre;
+						continue;
+					}
 				}
 				break;
 			}
@@ -82,28 +82,30 @@ string Parse::recupIntro(string cheminFichier)
 	string mot;
 	if(fichierConverti)
 	{
-		while (true)
-		{
-			fichierConverti >> mot;
-			mot = Utilitaire::to_lower(mot);
-			if (mot.find("introduction") != string::npos)
-				break;
-		}
-		string bufferIntro;
-		while (true)
-		{
-			getline(fichierConverti, bufferIntro);
-      if (bufferIntro.find('\f') != std::string::npos) {
-        do {
-        	getline(fichierConverti, bufferIntro);
-        } while (bufferIntro == "");
-      }
-      else if (estFinIntro(bufferIntro)) {
-        return intro;
-      }
-      else {
-        intro += bufferIntro;
-      }
+  		while (true)
+  		{
+  			fichierConverti >> mot;
+  			mot = Utilitaire::to_lower(mot);
+  		  	if (mot.find("introduction") != string::npos) {
+  			  	break;
+        	}
+  		}
+  		string bufferIntro;
+  		while (true)
+  		{
+  			getline(fichierConverti, bufferIntro);
+    	  	if (bufferIntro.find('\f') != std::string::npos) {
+    	    	do {
+    	    		getline(fichierConverti, bufferIntro);
+    	    	} while (bufferIntro == "");
+    	  	}
+    	  	else if (estFinIntro(bufferIntro)) {
+    	    	fichierConverti.close();
+    	    	return intro;
+    	  	}
+    	  	else {
+    	    	intro += bufferIntro;
+    	  	}
 		}
 	}
 	else
@@ -114,32 +116,66 @@ string Parse::recupIntro(string cheminFichier)
 string Parse::recupAuteur(string cheminFichier, string nomFichier)
 {
 	size_t pos = nomFichier.find('_');
-    string nomAuteur = nomFichier.substr(0, pos);
-   	ifstream fichierConverti(cheminFichier, ios::in);
-   	string auteur;
-   	if(fichierConverti)
-   	{
-   		while (getline(fichierConverti, auteur))
+	string nomAuteur = nomFichier.substr(0, pos);
+	ifstream fichierConverti(cheminFichier, ios::in);
+	string auteur;
+	if(fichierConverti)
+	{
+		while (getline(fichierConverti, auteur))
 		{
 			auteur = Utilitaire::conversion(auteur);
 			size_t found = auteur.find(nomAuteur);
-  			if (found!=string::npos)
-  			{
-  				pos = auteur.find(',');
-  				auteur = auteur.substr(0,pos);
- 				if(isdigit(auteur[auteur.size()-1]))
-  					auteur.erase(auteur.size() - 1);
-  				if(count( auteur.begin(), auteur.end(), ' ') > 1)
-  					while(auteur[auteur.size()-1] != ' ')
-  						auteur.erase(auteur.size() -1);
-  				break;
-  			}
+			if (found!=string::npos)
+			{
+				pos = auteur.find(',');
+				auteur = auteur.substr(0,pos);
+				if(isdigit(auteur[auteur.size()-1]))
+					auteur.erase(auteur.size() - 1);
+				if(count( auteur.begin(), auteur.end(), ' ') > 1)
+					while(auteur[auteur.size()-1] != ' ')
+						auteur.erase(auteur.size() -1);
+				break;
+			}
 		}
 		fichierConverti.close();
-   	}
-   	else
-   		cerr << "Impossible d'ouvrir le fichier !";
+	}
+	else
+		cerr << "Impossible d'ouvrir le fichier !";
 	return auteur;
+}
+
+string Parse::recupCorp(string cheminFichier)
+{
+	string texte = "";
+  	string bufferTexte;
+	ifstream fichierConverti(cheminFichier, ios::in);
+	if(fichierConverti)
+	{
+		while (true)
+		{
+	      	getline(fichierConverti, bufferTexte);
+			if (Parse::estFinIntro(bufferTexte))
+				break;
+		}
+		while (getline(fichierConverti, bufferTexte))
+		{
+	      	if (bufferTexte.find('\f') != std::string::npos) {
+	        	do {
+	        		getline(fichierConverti, bufferTexte);
+	        	} while (bufferTexte == "");
+	      	}
+	    	else if (estFinCorp(bufferTexte)) {
+	        	fichierConverti.close();
+	        	return texte;
+	      	}
+	     	else {
+	        	texte += bufferTexte;
+	      	}
+		}
+	}
+	else
+		cerr << "Impossible d'ouvrir le fichier !";
+	return texte;
 }
 
 bool controleAuteur(string chaine)
@@ -149,13 +185,13 @@ bool controleAuteur(string chaine)
 	size_t pos = 0;
 	while ((pos = chaine.find(" ")) != string::npos)
 	{
-	    token = chaine.substr(0, pos);
-	    if(isupper(token[0]))
-	    	continue;
-	    else
-	    	return false;
-	    chaine += token;
-	   	chaine.erase(0, pos + 1);
+		token = chaine.substr(0, pos);
+		if(isupper(token[0]))
+			continue;
+		else
+			return false;
+		chaine += token;
+		chaine.erase(0, pos + 1);
 	}
 	temp += chaine;
 	return true;
@@ -334,9 +370,9 @@ string Parse::recupDiscussion(string cheminFichier)
 }
 
 void Parse::execTxt(){
-    Utilitaire::ls(txt_path);
-    system("rm -Rf ../PARSE");
-    system("mkdir ../PARSE");
+	Utilitaire::ls(txt_path);
+	system("rm -Rf ../PARSE");
+	system("mkdir ../PARSE");
 	ifstream fichier("PapersList_temp.txt", ios::in);
 	if (fichier)
 	{
@@ -364,17 +400,17 @@ void Parse::execTxt(){
 }
 
 void Parse::execXML(){
-    Utilitaire::ls(txt_path);
-    cout << "systeme";
-    system("rm -Rf ../PARSE");
-    system("mkdir ../PARSE");
+	Utilitaire::ls(txt_path);
+	cout << "systeme";
+	system("rm -Rf ../PARSE");
+	system("mkdir ../PARSE");
 	ifstream fichier("PapersList_temp.txt", ios::in);
 	if (fichier)
 	{
 		string ligne;
 		string nameFormat;
 		string nameFormat2;
-    cout << "erreur?";
+	cout << "erreur?";
 		while(getline(fichier, ligne))
 		{
 			nameFormat = txt_path + ligne;
@@ -407,9 +443,9 @@ void Parse::execXML(){
 }
 
 void Parse::execXML2(){
-    Utilitaire::ls(txt_path);
-    system("rm -Rf ../PARSE");
-    system("mkdir ../PARSE");
+	Utilitaire::ls(txt_path);
+	system("rm -Rf ../PARSE");
+	system("mkdir ../PARSE");
 	ifstream fichier("PapersList_temp.txt", ios::in);
 	if (fichier)
 	{
@@ -433,7 +469,8 @@ void Parse::execXML2(){
 				fichierEcriture << "\t <titre> " << titre << " </titre>" << endl;
 				fichierEcriture << "\t <auteur> " << recupAuteur2(nameFormat,titre) << " </auteur>" << endl;
 				fichierEcriture << "\t <abstract> " << Utilitaire::formatage(recupResume(nameFormat)) << " </abstract>" << endl;
-        		fichierEcriture << "\t <intro> " << recupIntro(nameFormat) << " </intro>" << endl;
+				fichierEcriture << "\t <intro> " << recupIntro(nameFormat) << " </intro>" << endl;
+        		fichierEcriture << "\t <corp> " << recupCorp(nameFormat) << " </corp>" << endl;
 				fichierEcriture << "\t <conclusion>" << recupConclusion(nameFormat) << " </conclusion>" << endl;
 				fichierEcriture << "\t <discussion>" << recupDiscussion(nameFormat) << " </discussion>" << endl;
 				fichierEcriture << "\t <biblio>" << recupBibliographie(nameFormat, auteur) << " </biblio>" << endl;
@@ -451,15 +488,26 @@ void Parse::execXML2(){
 }
 
 bool Parse::estFinIntro(string ligne) {
-  for (int i = 0; i < ligne.size(); ++i) {
-    if (isalnum(ligne[i])) {
-      if(ligne[i] == '2' || (ligne[i] == 'I' && ligne[i] == 'I')) {
-        return Utilitaire::suivantEstMajuscule(ligne, 0);
-      }
-      return false;
-    }
-  }
-  return false;
+	for (int i = 0; i < ligne.size(); ++i) 
+	{
+		if (isalnum(ligne[i])) 
+		{
+	      	if(ligne[i] == '2') {
+	        	return Utilitaire::suivantEstMajuscule(ligne, i+1);
+	      	}
+	    	else if (ligne[i] == 'I' && ligne[i+1] == 'I') {
+	        	return Utilitaire::suivantEstMajuscule(ligne, i+2 );
+	    	}
+	    }
+	}
+	return false;
 }
 
+bool Parse::estFinCorp(string ligne) {
+  	return (estDebutConclusion(ligne) || ligne.find("Discusion") != string::npos);
+}
 
+bool Parse::estDebutConclusion(string ligne) {
+	ligne = Utilitaire::to_lower(ligne);
+	return (ligne.find("conclusion") != string::npos && (isdigit(ligne[0]) || (ligne.find("\f") != string::npos ) || Utilitaire::controleRomain(ligne)));
+}

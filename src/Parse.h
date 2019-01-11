@@ -5,21 +5,25 @@
 
 class Parse {
 private:
-  	std::string cheminFichier;
-  	std::string txt_path;
+	std::string cheminFichier;
+	std::string txt_path;
 
 public:
-  	Parse();
-  	std::string recupTitre(std::string, std::string);
-  	std::string recupResume(std::string);
-    std::string recupIntro(std::string);
-    std::string recupAuteur2(std::string, std::string);
-  	std::string recupAuteur(std::string, std::string);
-  	std::string recupBibliographie(std::string, std::string);
-  	std::string recupConclusion(std::string);
-  	std::string recupDiscussion(std::string);
-  	void execTxt();
-    void execXML();
-  	void execXML2();
-    bool estFinIntro(std::string);
+	Parse();
+	std::string recupTitre(std::string, std::string);
+	std::string recupResume(std::string);
+	std::string recupIntro(std::string);
+	std::string recupAuteur2(std::string, std::string);
+	std::string recupAuteur(std::string, std::string);
+	std::string recupBibliographie(std::string, std::string);
+	std::string recupConclusion(std::string);
+	std::string recupDiscussion(std::string);
+	std::string recupCorp(std::string);
+	void execTxt();
+	void execXML();
+	void execXML2();
+	bool estFinIntro(std::string);
+	bool estFinCorp(std::string);
+	bool estDebutConclusion(std::string);
+
 };
