@@ -67,8 +67,9 @@ string Utilitaire::conversion(string chaine)
 string Utilitaire::suppressionTitre(string chaine, string titre)
 {
 	size_t pos;
-	if(pos = chaine.find(titre) != string::npos)
+	if(pos = chaine.find(titre) != string::npos){
 		chaine.erase(0, pos + titre.size());
+	}
 	return chaine;
 }
 

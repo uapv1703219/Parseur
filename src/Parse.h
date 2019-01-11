@@ -14,7 +14,6 @@ public:
 	std::string recupResume(std::string);
 	std::string recupIntro(std::string);
 	std::string recupAuteur2(std::string, std::string);
-	std::string recupAuteur(std::string, std::string);
 	std::string recupBibliographie(std::string, std::string);
 	std::string recupConclusion(std::string);
 	std::string recupDiscussion(std::string);

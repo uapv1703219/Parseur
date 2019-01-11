@@ -42,7 +42,6 @@ string Parse::recupTitre(string cheminFichier, string auteur)
 	}
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
-  fichierConverti.close();
 	return titre;
 }
 
@@ -149,38 +148,6 @@ string Parse::recupCorp(string cheminFichier)
   fichierConverti.close();
 	return texte;
 }
-
-string Parse::recupAuteur(string cheminFichier, string nomFichier)
-{
-	size_t pos = nomFichier.find('_');
-	string nomAuteur = nomFichier.substr(0, pos);
-	ifstream fichierConverti(cheminFichier, ios::in);
-	string auteur;
-	if(fichierConverti)
-	{
-		while (getline(fichierConverti, auteur))
-		{
-			auteur = Utilitaire::conversion(auteur);
-			size_t found = auteur.find(nomAuteur);
-			if (found!=string::npos)
-			{
-				pos = auteur.find(',');
-				auteur = auteur.substr(0,pos);
-				if(isdigit(auteur[auteur.size()-1]))
-					auteur.erase(auteur.size() - 1);
-				if(count( auteur.begin(), auteur.end(), ' ') > 1)
-					while(auteur[auteur.size()-1] != ' ')
-						auteur.erase(auteur.size() -1);
-				break;
-			}
-		}
-		fichierConverti.close();
-	}
-	else
-		cerr << "Impossible d'ouvrir le fichier !";
-	return auteur;
-}
-
 
 string Parse::recupAuteur2(string cheminFichier, string titre)
 {
@@ -410,7 +377,7 @@ void Parse::execXML(){
 				fichierEcriture << "<article>" << endl;
 				fichierEcriture << "\t <preamble> " << ligne << " </preamble>" << endl;
 				fichierEcriture << "\t <titre> " << titre << " </titre>" << endl;
-				fichierEcriture << "\t <auteur> " << recupAuteur2(nameFormat, auteur) << " </auteur>" << endl;
+				fichierEcriture << "\t <auteur> " << recupAuteur2(nameFormat, titre) << " </auteur>" << endl;
 				fichierEcriture << "\t <abstract> " << Utilitaire::formatage(recupResume(nameFormat)) << " </abstract>" << endl;
 				fichierEcriture << "\t <biblio>" << recupBibliographie(nameFormat, auteur) << " </biblio>" << endl;
 				fichierEcriture << "</article>";
@@ -445,13 +412,13 @@ void Parse::execXML2(){
 			ofstream fichierEcriture("../PARSE/" + nameFormat2, ios::out | ios::trunc);
 			if(fichierEcriture)
 			{
-				string auteur = recupAuteur2(nameFormat, ligne);
-				string titre = recupTitre(nameFormat, auteur);
+				string titre = recupTitre(nameFormat, titre);
+				string auteur = recupAuteur2(nameFormat, titre);
 				fichierEcriture << "<?xml version = \"1.0\" encoding=\"UTF-8\"?>" << endl;
 				fichierEcriture << "<article>" << endl;
 				fichierEcriture << "\t <preamble> " << ligne << " </preamble>" << endl;
 				fichierEcriture << "\t <titre> " << titre << " </titre>" << endl;
-				fichierEcriture << "\t <auteur> " << recupAuteur2(nameFormat,auteur) << " </auteur>" << endl;
+				fichierEcriture << "\t <auteur> " << auteur << " </auteur>" << endl;
 				fichierEcriture << "\t <abstract> " << Utilitaire::formatage(recupResume(nameFormat)) << " </abstract>" << endl;
 				fichierEcriture << "\t <intro> " << recupIntro(nameFormat) << " </intro>" << endl;
         		fichierEcriture << "\t <corp> " << recupCorp(nameFormat) << " </corp>" << endl;
