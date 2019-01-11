@@ -25,5 +25,4 @@ public:
 	bool estFinIntro(std::string);
 	bool estFinCorp(std::string);
 	bool estDebutConclusion(std::string);
-
 };

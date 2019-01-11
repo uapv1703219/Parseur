@@ -43,6 +43,7 @@ string Parse::recupTitre(string cheminFichier, string nomFichier)
 	}
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
+  fichierConverti.close();
 	return titre;
 }
 
@@ -72,6 +73,7 @@ string Parse::recupResume(string cheminFichier)
 	}
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
+  fichierConverti.close();
 	return resume;
 }
 
@@ -87,30 +89,66 @@ string Parse::recupIntro(string cheminFichier)
   			fichierConverti >> mot;
   			mot = Utilitaire::to_lower(mot);
   		  	if (mot.find("introduction") != string::npos) {
-  			  	break;
-        	}
-  		}
-  		string bufferIntro;
-  		while (true)
-  		{
-  			getline(fichierConverti, bufferIntro);
-    	  	if (bufferIntro.find('\f') != std::string::npos) {
-    	    	do {
-    	    		getline(fichierConverti, bufferIntro);
-    	    	} while (bufferIntro == "");
-    	  	}
-    	  	else if (estFinIntro(bufferIntro)) {
-    	    	fichierConverti.close();
-    	    	return intro;
-    	  	}
-    	  	else {
-    	    	intro += bufferIntro;
-    	  	}
+  			  break;
+        }
+  	}
+  	string bufferIntro;
+  	while (true)
+  	{
+  		getline(fichierConverti, bufferIntro);
+      if (bufferIntro.find('\f') != std::string::npos) {
+        do {
+        	getline(fichierConverti, bufferIntro);
+        } while (bufferIntro == "");
+      }
+      else if (estFinIntro(bufferIntro)) {
+        fichierConverti.close();
+        return intro;
+      }
+      else {
+        intro += bufferIntro;
+      }
+	}
+	}
+	else
+		cerr << "Impossible d'ouvrir le fichier !";
+  fichierConverti.close();
+	return intro;
+}
+
+string Parse::recupCorp(string cheminFichier)
+{
+	string texte = "";
+  string bufferTexte;
+	ifstream fichierConverti(cheminFichier, ios::in);
+	if(fichierConverti)
+	{
+		while (true)
+		{
+      getline(fichierConverti, bufferTexte);
+			if (Parse::estFinIntro(bufferTexte))
+				break;
+		}
+		while (getline(fichierConverti, bufferTexte))
+		{
+      if (bufferTexte.find('\f') != std::string::npos) {
+        do {
+        	getline(fichierConverti, bufferTexte);
+        } while (bufferTexte == "");
+      }
+      else if (estFinCorp(bufferTexte)) {
+        fichierConverti.close();
+        return texte;
+      }
+      else {
+        texte += bufferTexte;
+      }
 		}
 	}
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
-	return intro;
+  fichierConverti.close();
+	return texte;
 }
 
 string Parse::recupAuteur(string cheminFichier, string nomFichier)
@@ -144,58 +182,6 @@ string Parse::recupAuteur(string cheminFichier, string nomFichier)
 	return auteur;
 }
 
-string Parse::recupCorp(string cheminFichier)
-{
-	string texte = "";
-  	string bufferTexte;
-	ifstream fichierConverti(cheminFichier, ios::in);
-	if(fichierConverti)
-	{
-		while (true)
-		{
-	      	getline(fichierConverti, bufferTexte);
-			if (Parse::estFinIntro(bufferTexte))
-				break;
-		}
-		while (getline(fichierConverti, bufferTexte))
-		{
-	      	if (bufferTexte.find('\f') != std::string::npos) {
-	        	do {
-	        		getline(fichierConverti, bufferTexte);
-	        	} while (bufferTexte == "");
-	      	}
-	    	else if (estFinCorp(bufferTexte)) {
-	        	fichierConverti.close();
-	        	return texte;
-	      	}
-	     	else {
-	        	texte += bufferTexte;
-	      	}
-		}
-	}
-	else
-		cerr << "Impossible d'ouvrir le fichier !";
-	return texte;
-}
-
-bool controleAuteur(string chaine)
-{
-	string temp;
-	string token;
-	size_t pos = 0;
-	while ((pos = chaine.find(" ")) != string::npos)
-	{
-		token = chaine.substr(0, pos);
-		if(isupper(token[0]))
-			continue;
-		else
-			return false;
-		chaine += token;
-		chaine.erase(0, pos + 1);
-	}
-	temp += chaine;
-	return true;
-}
 
 string Parse::recupAuteur2(string cheminFichier, string titre)
 {
@@ -225,6 +211,7 @@ string Parse::recupAuteur2(string cheminFichier, string titre)
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
 	bufferTemp = Utilitaire::suppressionTitre(bufferTemp,titre);
+  fichierConverti.close();
 	return bufferTemp;
 }
 
@@ -488,26 +475,25 @@ void Parse::execXML2(){
 }
 
 bool Parse::estFinIntro(string ligne) {
-	for (int i = 0; i < ligne.size(); ++i) 
-	{
-		if (isalnum(ligne[i])) 
-		{
-	      	if(ligne[i] == '2') {
-	        	return Utilitaire::suivantEstMajuscule(ligne, i+1);
-	      	}
-	    	else if (ligne[i] == 'I' && ligne[i+1] == 'I') {
-	        	return Utilitaire::suivantEstMajuscule(ligne, i+2 );
-	    	}
-	    }
-	}
-	return false;
+  for (int i = 0; i < ligne.size(); ++i) {
+    if (isalnum(ligne[i])) {
+      if(ligne[i] == '2') {
+        return Utilitaire::suivantEstMajuscule(ligne, i+1);
+      }
+      else if (ligne[i] == 'I' && ligne[i+1] == 'I') {
+        return Utilitaire::suivantEstMajuscule(ligne, i+2 );
+      }
+      return false;
+    }
+  }
+  return false;
 }
 
 bool Parse::estFinCorp(string ligne) {
-  	return (estDebutConclusion(ligne) || ligne.find("Discusion") != string::npos);
+  return (estDebutConclusion(ligne) || ligne.find("Discusion") != string::npos);
 }
 
 bool Parse::estDebutConclusion(string ligne) {
-	ligne = Utilitaire::to_lower(ligne);
-	return (ligne.find("conclusion") != string::npos && (isdigit(ligne[0]) || (ligne.find("\f") != string::npos ) || Utilitaire::controleRomain(ligne)));
+  ligne = Utilitaire::to_lower(ligne);
+  return (ligne.find("conclusion") != string::npos && (isdigit(ligne[0]) || (ligne.find("\f") != string::npos ) || Utilitaire::controleRomain(ligne)));
 }
