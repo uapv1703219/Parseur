@@ -82,17 +82,18 @@ string Parse::recupIntro(string cheminFichier)
 	string mot;
 	if(fichierConverti)
 	{
-		while (true)
-		{
-			fichierConverti >> mot;
-			mot = Utilitaire::to_lower(mot);
-			if (mot.find("introduction") != string::npos)
-				break;
-		}
-		string bufferIntro;
-		while (true)
-		{
-			getline(fichierConverti, bufferIntro);
+  		while (true)
+  		{
+  			fichierConverti >> mot;
+  			mot = Utilitaire::to_lower(mot);
+  		  if (mot.find("introduction") != string::npos) {
+  			  break;
+        }
+  	}
+  	string bufferIntro;
+  	while (true)
+  	{
+  		getline(fichierConverti, bufferIntro);
       if (bufferIntro.find('\f') != std::string::npos) {
         do {
         	getline(fichierConverti, bufferIntro);
@@ -104,7 +105,7 @@ string Parse::recupIntro(string cheminFichier)
       else {
         intro += bufferIntro;
       }
-		}
+	}
 	}
 	else
 		cerr << "Impossible d'ouvrir le fichier !";
@@ -433,7 +434,7 @@ void Parse::execXML2(){
 				fichierEcriture << "\t <titre> " << titre << " </titre>" << endl;
 				fichierEcriture << "\t <auteur> " << recupAuteur2(nameFormat,titre) << " </auteur>" << endl;
 				fichierEcriture << "\t <abstract> " << Utilitaire::formatage(recupResume(nameFormat)) << " </abstract>" << endl;
-        		fichierEcriture << "\t <intro> " << recupIntro(nameFormat) << " </intro>" << endl;
+        fichierEcriture << "\t <intro> " << recupIntro(nameFormat) << " </intro>" << endl;
 				fichierEcriture << "\t <conclusion>" << recupConclusion(nameFormat) << " </conclusion>" << endl;
 				fichierEcriture << "\t <discussion>" << recupDiscussion(nameFormat) << " </discussion>" << endl;
 				fichierEcriture << "\t <biblio>" << recupBibliographie(nameFormat, auteur) << " </biblio>" << endl;
@@ -453,13 +454,14 @@ void Parse::execXML2(){
 bool Parse::estFinIntro(string ligne) {
   for (int i = 0; i < ligne.size(); ++i) {
     if (isalnum(ligne[i])) {
-      if(ligne[i] == '2' || (ligne[i] == 'I' && ligne[i] == 'I')) {
-        return Utilitaire::suivantEstMajuscule(ligne, 0);
+      if(ligne[i] == '2') {
+        return Utilitaire::suivantEstMajuscule(ligne, i+1);
+      }
+      else if (ligne[i] == 'I' && ligne[i+1] == 'I') {
+        return Utilitaire::suivantEstMajuscule(ligne, i+2 );
       }
       return false;
     }
   }
   return false;
 }
-
-
