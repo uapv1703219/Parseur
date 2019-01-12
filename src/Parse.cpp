@@ -10,7 +10,7 @@ Parse::Parse() {
 	this->txt_path = "../CONVERT/";
 }
 
-string Parse::recupTitre(string cheminFichier, string auteur)
+string Parse::recupTitre(string cheminFichier)
 {
 	ifstream fichierConverti(cheminFichier, ios::in);
 	string titre;
@@ -28,8 +28,6 @@ string Parse::recupTitre(string cheminFichier, string auteur)
 						continue;
 					else if (!controle)
 					{
-						if(Utilitaire::foundWord(bufferTitre,auteur))
-							break;
 						controle = true;
 						titre += " " + bufferTitre;
 						continue;
@@ -338,7 +336,7 @@ void Parse::execTxt(){
 			if(fichierEcriture)
 			{
 				fichierEcriture << "Nom du fichier d'origine : " << ligne << endl;
-				fichierEcriture << "Titre : " << recupTitre(nameFormat, ligne) << endl;
+				fichierEcriture << "Titre : " << recupTitre(nameFormat) << endl;
 				fichierEcriture << "Resume : " << Utilitaire::formatage(recupResume(nameFormat)) << endl;
 				fichierEcriture.close();
 			}
@@ -371,7 +369,7 @@ void Parse::execXML(){
 			ofstream fichierEcriture("../PARSE/" + nameFormat2, ios::out | ios::trunc);
 			if(fichierEcriture)
 			{
-				string titre = recupTitre(nameFormat, titre);
+				string titre = recupTitre(nameFormat);
 				string auteur = recupAuteur2(nameFormat, titre);
 				fichierEcriture << "<?xml version = \"1.0\" encoding=\"UTF-8\"?>" << endl;
 				fichierEcriture << "<article>" << endl;
@@ -412,7 +410,7 @@ void Parse::execXML2(){
 			ofstream fichierEcriture("../PARSE/" + nameFormat2, ios::out | ios::trunc);
 			if(fichierEcriture)
 			{
-				string titre = recupTitre(nameFormat, titre);
+				string titre = recupTitre(nameFormat);
 				string auteur = recupAuteur2(nameFormat, titre);
 				fichierEcriture << "<?xml version = \"1.0\" encoding=\"UTF-8\"?>" << endl;
 				fichierEcriture << "<article>" << endl;
